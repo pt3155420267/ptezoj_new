@@ -8,7 +8,6 @@ import {
 } from '../error';
 import { Logger } from '../logger';
 import { PRIV, STATUS } from '../model/builtin';
-import domain from '../model/domain';
 import record from '../model/record';
 import * as setting from '../model/setting';
 import * as system from '../model/system';
@@ -219,17 +218,17 @@ class SystemUserImportHandler extends SystemHandler {
     @param('draft', Types.Boolean)
     async post(domainId: string, _users: string, draft: boolean) {
         const users = _users.split('\n');
-        const udocs: { email: string, username: string, password: string, displayName?: string, payload?: any }[] = [];
+        const udocs: { email: string, username: string, password: string, school: string, realname: string, payload?: any }[] = [];
         const messages = [];
         const mapping = {};
         const groups: Record<string, string[]> = {};
         for (const i in users) {
             const u = users[i];
             if (!u.trim()) continue;
-            let [email, username, password, displayName, extra] = u.split('\t').map((t) => t.trim());
+            let [email, username, password, school, realname, extra] = u.split('\t').map((t) => t.trim());
             if (!email || !username || !password) {
                 const data = u.split(',').map((t) => t.trim());
-                [email, username, password, displayName, extra] = data;
+                [email, username, password, school, realname, extra] = data;
                 if (data.length > 5) extra = data.slice(4).join(',');
             }
             if (email && username && password) {
@@ -252,7 +251,7 @@ class SystemUserImportHandler extends SystemHandler {
                         if (data.studentId) payload.studentId = data.studentId;
                     } catch (e) { }
                     udocs.push({
-                        email, username, password, displayName, payload,
+                        email, username, password, school, realname, payload,
                     });
                 }
             } else messages.push(`Line ${+i + 1}: Input invalid.`);
@@ -261,11 +260,10 @@ class SystemUserImportHandler extends SystemHandler {
         if (!draft) {
             for (const udoc of udocs) {
                 try {
-                    const uid = await user.create(udoc.email, udoc.username, udoc.password);
+                    const uid = await user.create(udoc.email, udoc.username, udoc.password, udoc.school, udoc.realname);
                     mapping[udoc.email] = uid;
-                    if (udoc.displayName) await domain.setUserInDomain(domainId, uid, { displayName: udoc.displayName });
                     if (udoc.payload?.school) await user.setById(uid, { school: udoc.payload.school });
-                    if (udoc.payload?.studentId) await user.setById(uid, { studentId: udoc.payload.studentId });
+                    if (udoc.payload?.realname) await user.setById(uid, { school: udoc.payload.realname });
                 } catch (e) {
                     messages.push(e.message);
                 }
@@ -319,6 +317,31 @@ class SystemUserPrivHandler extends SystemHandler {
     }
 }
 
+class SystemChangeUserPasswordHandler extends SystemHandler {
+    @requireSudo
+    async get() {
+        this.response.template = 'manage_user_changepassword.html';
+    }
+
+    @requireSudo
+    @param('password', Types.String)
+    @param('confirmPassword', Types.String)
+    @param('userID', Types.Int,true)
+    @param('email', Types.String,true)
+    @param('username', Types.String,true)
+    async post(domainId: string, password: string, confirmPassword: string, userID?: number, email?: string, username?: string) {
+        let udoc = null;
+        if (password !== confirmPassword) throw new ValidationError('密码不一致！');
+        if (userID) udoc = await user.getById('system', userID);
+        else if (email) udoc = await user.getByEmail('system', email);
+        else if (username) udoc = await user.getByUname('system', username);
+        else throw new UserNotFoundError('请填写用户信息！');
+        if (!udoc) throw new UserNotFoundError('用户不存在！');
+        await user.setPassword(udoc._id, password);
+        this.back();
+    }
+}
+
 export async function apply(ctx) {
     ctx.Route('manage', '/manage', SystemMainHandler);
     ctx.Route('manage_dashboard', '/manage/dashboard', SystemDashboardHandler);
@@ -327,5 +350,6 @@ export async function apply(ctx) {
     ctx.Route('manage_config', '/manage/config', SystemConfigHandler);
     ctx.Route('manage_user_import', '/manage/userimport', SystemUserImportHandler);
     ctx.Route('manage_user_priv', '/manage/userpriv', SystemUserPrivHandler);
+    ctx.Route('manage_user_changepassword', '/manage/changepassword', SystemChangeUserPasswordHandler);
     ctx.Connection('manage_check', '/manage/check-conn', SystemCheckConnHandler);
 }

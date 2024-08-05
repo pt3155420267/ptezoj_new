@@ -59,9 +59,6 @@ inject('Nav', 'homework_main', { prefix: 'homework' }, PERM.PERM_VIEW_HOMEWORK);
 inject('Nav', 'discussion_main', { prefix: 'discussion' }, PERM.PERM_VIEW_DISCUSSION);
 inject('Nav', 'record_main', {
     prefix: 'record',
-    query: (handler) => (handler.user.hasPriv(PRIV.PRIV_USER_PROFILE)
-        ? ({ uidOrName: handler.user._id })
-        : ({})),
 });
 inject('Nav', 'ranking', { prefix: 'ranking' }, PERM.PERM_VIEW_RANKING);
 inject('Nav', 'domain_dashboard', { prefix: 'domain' }, PERM.PERM_EDIT_DOMAIN);
@@ -70,6 +67,7 @@ inject('ProblemAdd', 'problem_create', { icon: 'add', text: 'Create Problem' });
 inject('ControlPanel', 'manage_dashboard');
 inject('ControlPanel', 'manage_script');
 inject('ControlPanel', 'manage_user_import');
+inject('ControlPanel', 'manage_user_changepassword');
 inject('ControlPanel', 'manage_user_priv');
 inject('ControlPanel', 'manage_setting');
 inject('ControlPanel', 'manage_config');

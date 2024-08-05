@@ -309,7 +309,7 @@ class UserModel {
 
     @ArgMethod
     static async create(
-        mail: string, uname: string, password: string,
+        mail: string, uname: string, password: string, school: string, realname: string,
         uid?: number, regip: string = '127.0.0.1', priv: number = system.get('default.priv'),
     ) {
         let autoAlloc = false;
@@ -338,6 +338,8 @@ class UserModel {
                     loginip: regip,
                     priv,
                     avatar: `gravatar:${mail}`,
+                    school,
+                    realname,
                 });
                 return uid;
             } catch (e) {
@@ -386,7 +388,7 @@ class UserModel {
 
     static async getListForRender(domainId: string, uids: number[], showDisplayName = true) {
         const [udocs, vudocs, dudocs] = await Promise.all([
-            UserModel.getMulti({ _id: { $in: uids } }, ['_id', 'uname', 'mail', 'avatar', 'school', 'studentId']).toArray(),
+            UserModel.getMulti({ _id: { $in: uids } }, ['_id', 'uname', 'mail', 'avatar', 'school', 'realname', 'studentId']).toArray(),
             collV.find({ _id: { $in: uids } }).toArray(),
             domain.getDomainUserMulti(domainId, uids).project({ uid: 1, ...(showDisplayName ? { displayName: 1 } : {}) }).toArray(),
         ]);

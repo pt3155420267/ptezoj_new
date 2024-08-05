@@ -72,6 +72,7 @@ class UserLoginHandler extends Handler {
             } else throw new ValidationError('2FA', 'Authn');
         }
         await udoc.checkPassword(password);
+        await token.delByUid(udoc._id);
         await user.setById(udoc._id, { loginat: new Date(), loginip: this.request.ip });
         if (!udoc.hasPriv(PRIV.PRIV_USER_PROFILE)) throw new BlacklistedError(uname, udoc.banReason);
         this.context.HydroContext.user = udoc;
@@ -248,10 +249,12 @@ class UserRegisterWithCodeHandler extends Handler {
     @param('password', Types.Password)
     @param('verifyPassword', Types.Password)
     @param('uname', Types.Username)
+    @param('school', Types.School)
+    @param('realname', Types.RealName)
     @param('code', Types.String)
     async post(
         domainId: string, password: string, verify: string,
-        uname: string, code: string,
+        uname: string, school: string, realname: string, code: string,
     ) {
         if (password !== verify) throw new VerifyPasswordError();
         if (this.tdoc.phone) this.tdoc.mail = `${String.random(12)}@hydro.local`;

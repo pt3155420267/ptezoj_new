@@ -168,7 +168,7 @@ export async function load() {
         const { all } = await simpleGit().log();
         if (all.length > 0) Hydro.version.hydrooj += `-${all[0].hash.substring(0, 7)}`;
         const { isClean } = await simpleGit().status();
-        if (!isClean()) Hydro.version.hydrooj += '-dirty';
+        // if (!isClean()) Hydro.version.hydrooj += '-dirty';
         if (process.env.DEV) {
             const q = await simpleGit().listRemote(['--get-url']);
             if (!q.includes('hydro-dev/Hydro')) {
@@ -187,10 +187,10 @@ export async function load() {
                 console.warn(' 你需要同样以 AGPL3 协议开源所有的修改，');
                 console.warn(' 并保留所有的版权声明。');
                 console.warn('\x1b[39m');
-                console.log('');
-                console.log('Hydro will start in 5s.');
-                console.log('Hydro 将在五秒后继续启动。');
-                await sleep(5000);
+                // console.log('');
+                // console.log('Hydro will start in 5s.');
+                // console.log('Hydro 将在五秒后继续启动。');
+                // await sleep(5000);
             }
         }
     } catch (e) { }

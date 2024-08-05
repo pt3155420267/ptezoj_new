@@ -20,7 +20,7 @@ import user from '../model/user';
 import {
     Handler, param, post, Types,
 } from '../service/server';
-import { ContestCodeHandler, ContestScoreboardHandler } from './contest';
+import { ContestCodeHandler, ContestScoreboardHandler, ContestSimHandler } from './contest';
 
 const validatePenaltyRules = (input: string) => yaml.load(input);
 const convertPenaltyRules = validatePenaltyRules;
@@ -329,6 +329,7 @@ export async function apply(ctx) {
         ContestScoreboardHandler, PERM.PERM_VIEW_HOMEWORK_SCOREBOARD,
     );
     ctx.Route('homework_code', '/homework/:tid/code', ContestCodeHandler, PERM.PERM_VIEW_HOMEWORK);
+    ctx.Route('homework_sim', '/homework/:tid/sim', ContestSimHandler, PERM.PERM_EDIT_CONTEST);
     ctx.Route('homework_edit', '/homework/:tid/edit', HomeworkEditHandler);
     ctx.Route('homework_files', '/homework/:tid/file', HomeworkFilesHandler, PERM.PERM_VIEW_HOMEWORK);
     ctx.Route('homework_file_download', '/homework/:tid/file/:filename', HomeworkFileDownloadHandler, PERM.PERM_VIEW_HOMEWORK);

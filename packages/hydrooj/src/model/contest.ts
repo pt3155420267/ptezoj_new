@@ -136,10 +136,8 @@ const acm = buildContestRule({
             { type: 'user', value: _('User') },
         ];
         if (config.isExport) {
-            columns.push({ type: 'email', value: _('Email') });
             columns.push({ type: 'string', value: _('School') });
-            columns.push({ type: 'string', value: _('Name') });
-            columns.push({ type: 'string', value: _('Student ID') });
+            columns.push({ type: 'string', value: _('RealName') });
         }
         columns.push({ type: 'solved', value: `${_('Solved')}\n${_('Total Time')}` });
         for (let i = 1; i <= tdoc.pids.length; i++) {
@@ -172,10 +170,8 @@ const acm = buildContestRule({
             { type: 'user', value: udoc.uname, raw: tsdoc.uid },
         ];
         if (config.isExport) {
-            row.push({ type: 'email', value: udoc.mail });
             row.push({ type: 'string', value: udoc.school || '' });
-            row.push({ type: 'string', value: udoc.displayName || '' });
-            row.push({ type: 'string', value: udoc.studentId || '' });
+            row.push({ type: 'string', value: udoc.realname || '' });
         }
         row.push({
             type: 'time',
@@ -309,10 +305,8 @@ const oi = buildContestRule({
             { type: 'user', value: _('User') },
         ];
         if (config.isExport) {
-            columns.push({ type: 'email', value: _('Email') });
             columns.push({ type: 'string', value: _('School') });
-            columns.push({ type: 'string', value: _('Name') });
-            columns.push({ type: 'string', value: _('Student ID') });
+            columns.push({ type: 'string', value: _('RealName') });
         }
         columns.push({ type: 'total_score', value: _('Total Score') });
         for (let i = 1; i <= tdoc.pids.length; i++) {
@@ -343,10 +337,8 @@ const oi = buildContestRule({
             return score * ((tdoc.score?.[pid] || 100) / 100);
         };
         if (config.isExport) {
-            row.push({ type: 'email', value: udoc.mail });
             row.push({ type: 'string', value: udoc.school || '' });
-            row.push({ type: 'string', value: udoc.displayName || '' });
-            row.push({ type: 'string', value: udoc.studentId || '' });
+            row.push({ type: 'string', value: udoc.realname || '' });
         }
         row.push({ type: 'total_score', value: tsdoc.score || 0 });
         const accepted = {};
@@ -488,10 +480,8 @@ const strictioi = buildContestRule({
             { type: 'user', value: udoc.uname, raw: tsdoc.uid },
         ];
         if (config.isExport) {
-            row.push({ type: 'email', value: udoc.mail });
             row.push({ type: 'string', value: udoc.school || '' });
-            row.push({ type: 'string', value: udoc.displayName || '' });
-            row.push({ type: 'string', value: udoc.studentId || '' });
+            row.push({ type: 'string', value: udoc.realname || '' });
         }
         row.push({ type: 'total_score', value: tsdoc.score || 0 });
         const accepted = {};
@@ -560,10 +550,8 @@ const ledo = buildContestRule({
             { type: 'user', value: udoc.uname, raw: tsdoc.uid },
         ];
         if (config.isExport) {
-            row.push({ type: 'email', value: udoc.mail });
             row.push({ type: 'string', value: udoc.school || '' });
-            row.push({ type: 'string', value: udoc.displayName || '' });
-            row.push({ type: 'string', value: udoc.studentId || '' });
+            row.push({ type: 'string', value: udoc.realname || '' });
         }
         row.push({
             type: 'total_score',
