@@ -258,7 +258,7 @@ class UserRegisterWithCodeHandler extends Handler {
     ) {
         if (password !== verify) throw new VerifyPasswordError();
         if (this.tdoc.phone) this.tdoc.mail = `${String.random(12)}@hydro.local`;
-        const uid = await user.create(this.tdoc.mail, uname, password, undefined, this.request.ip);
+        const uid = await user.create(this.tdoc.mail, uname, password, school, realname, undefined, this.request.ip);
         await token.del(code, token.TYPE_REGISTRATION);
         const [id, mailDomain] = this.tdoc.mail.split('@');
         const $set: any = this.tdoc.set || {};
